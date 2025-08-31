@@ -9,103 +9,103 @@ from .player import _Player
 
 
 class Handedness(enum.StrEnum):
-    LEFT = 'L'
-    RIGHT = 'R'
+    LEFT = "L"
+    RIGHT = "R"
 
 
 class PitchResult(enum.StrEnum):
-    BALL = 'B'
-    STRIKE = 'S'
-    HIT = 'X'
+    BALL = "B"
+    STRIKE = "S"
+    HIT = "X"
 
 
 class InFieldingAlignment(enum.StrEnum):
-    INFIELD_SHADE = 'Infield shade'
-    STANDARD = 'Standard'
-    STRATEGIC = 'Strategic'
+    INFIELD_SHADE = "Infield shade"
+    STANDARD = "Standard"
+    STRATEGIC = "Strategic"
 
 
 class OutFieldingAlignment(enum.StrEnum):
-    FOURTH_OUTFIELDER = '4th outfielder'
-    STANDARD = 'Standard'
-    STRATEGIC = 'Strategic'
+    FOURTH_OUTFIELDER = "4th outfielder"
+    STANDARD = "Standard"
+    STRATEGIC = "Strategic"
 
 
 class BattedBallType(enum.StrEnum):
-   FLY_BALL = 'fly_ball'
-   GROUND_BALL = 'ground_ball'
-   LINE_DRIVE = 'line_drive'
-   POPUP = 'popup'
+    FLY_BALL = "fly_ball"
+    GROUND_BALL = "ground_ball"
+    LINE_DRIVE = "line_drive"
+    POPUP = "popup"
 
 
 class PitchDescription(enum.StrEnum):
-    BALL = 'ball'
-    BLOCKED_BALL = 'blocked_ball'
-    BUNT_FOUL_TIP = 'bunt_foul_tip'
-    CALLED_STRIKE = 'called_strike'
-    FOUL = 'foul'
-    FOUL_BUNT = 'foul_bunt'
-    FOUL_TIP = 'foul_tip'
-    HIT_BY_PITCH = 'hit_by_pitch'
-    HIT_INTO_PLAY = 'hit_into_play'
-    MISSED_BUNT = 'missed_bunt'
-    PITCHOUT = 'pitchout'
-    SWINGING_STRIKE = 'swinging_strike'
-    SWINGING_STRIKE_BLOCKE = 'swinging_strike_blocked'
+    BALL = "ball"
+    BLOCKED_BALL = "blocked_ball"
+    BUNT_FOUL_TIP = "bunt_foul_tip"
+    CALLED_STRIKE = "called_strike"
+    FOUL = "foul"
+    FOUL_BUNT = "foul_bunt"
+    FOUL_TIP = "foul_tip"
+    HIT_BY_PITCH = "hit_by_pitch"
+    HIT_INTO_PLAY = "hit_into_play"
+    MISSED_BUNT = "missed_bunt"
+    PITCHOUT = "pitchout"
+    SWINGING_STRIKE = "swinging_strike"
+    SWINGING_STRIKE_BLOCKE = "swinging_strike_blocked"
 
 
 class AtBatEvent(enum.StrEnum):
-    CATCHER_INTERF = 'catcher_interf'
-    DOUBLE = 'double'
-    DOUBLE_PLAY = 'double_play'
-    FIELD_ERROR = 'field_error'
-    FIELD_OUT = 'field_out'
-    FIELDERS_CHOICE = 'fielders_choice'
-    FIELDERS_CHOICE_OUT = 'fielders_choice_out'
-    FORCE_OUT = 'force_out'
-    GROUNDED_INTO_DOUBLE_PLAY = 'grounded_into_double_play'
-    HIT_BY_PITCH = 'hit_by_pitch'
-    HOME_RUN = 'home_run'
-    SAC_BUNT = 'sac_bunt'
-    SAC_FLY = 'sac_fly'
-    SAC_FLY_DOUBLE_PLAY = 'sac_fly_double_play'
-    SINGLE = 'single'
-    STRIKEOUT = 'strikeout'
-    STRIKEOUT_DOUBLE_PLAY = 'strikeout_double_play'
-    TRIPLE = 'triple'
-    TRIPLE_PLAY = 'triple_play'
-    TRUNCATED_PA = 'truncated_pa'
-    WALK = 'walk'
+    CATCHER_INTERF = "catcher_interf"
+    DOUBLE = "double"
+    DOUBLE_PLAY = "double_play"
+    FIELD_ERROR = "field_error"
+    FIELD_OUT = "field_out"
+    FIELDERS_CHOICE = "fielders_choice"
+    FIELDERS_CHOICE_OUT = "fielders_choice_out"
+    FORCE_OUT = "force_out"
+    GROUNDED_INTO_DOUBLE_PLAY = "grounded_into_double_play"
+    HIT_BY_PITCH = "hit_by_pitch"
+    HOME_RUN = "home_run"
+    SAC_BUNT = "sac_bunt"
+    SAC_FLY = "sac_fly"
+    SAC_FLY_DOUBLE_PLAY = "sac_fly_double_play"
+    SINGLE = "single"
+    STRIKEOUT = "strikeout"
+    STRIKEOUT_DOUBLE_PLAY = "strikeout_double_play"
+    TRIPLE = "triple"
+    TRIPLE_PLAY = "triple_play"
+    TRUNCATED_PA = "truncated_pa"
+    WALK = "walk"
 
 
 class PitchType(enum.StrEnum):
-    FOUR_SEAM_FASTBALL = 'FF'
-    CHANGEUP = 'CH'
-    SLIDER = 'SL'
-    CUTTER = 'FC'
-    SINKER = 'SI'
-    CURVEBALL = 'CU'
-    KNUCKLE_CURVE = 'KC'
-    SWEEPER = 'ST'
-    SPLIT_FINGER = 'FS'
-    SLURVE = 'SV'
-    OTHER = 'FA'
-    EEPHUS = 'EP'
-    SLOW_CURVE = 'CS'
-    SCREWBALL = 'SC'
-    KNUCKLEBALL = 'KN'
-    PITCH_OUT = 'PO'
+    FOUR_SEAM_FASTBALL = "FF"
+    CHANGEUP = "CH"
+    SLIDER = "SL"
+    CUTTER = "FC"
+    SINKER = "SI"
+    CURVEBALL = "CU"
+    KNUCKLE_CURVE = "KC"
+    SWEEPER = "ST"
+    SPLIT_FINGER = "FS"
+    SLURVE = "SV"
+    OTHER = "FA"
+    EEPHUS = "EP"
+    SLOW_CURVE = "CS"
+    SCREWBALL = "SC"
+    KNUCKLEBALL = "KN"
+    PITCH_OUT = "PO"
 
 
 # TODO(mkcmkc): Remove redundant fields.
 class _Pitch(pw.Model):
-    game = pw.ForeignKeyField(_Game, backref='pitches')
+    game = pw.ForeignKeyField(_Game, backref="pitches")
     pitch_type = util.enum_to_field(PitchType, null=True)
     release_speed = pw.DoubleField(null=True)
     release_pos_x = pw.DoubleField(null=True)
     release_pos_z = pw.DoubleField(null=True)
-    batter = pw.ForeignKeyField(_Player, backref='as_batter')
-    pitcher = pw.ForeignKeyField(_Player, backref='as_pitcher')
+    batter = pw.ForeignKeyField(_Player, backref="as_batter")
+    pitcher = pw.ForeignKeyField(_Player, backref="as_pitcher")
     events = util.enum_to_field(AtBatEvent, null=True)
     description = util.enum_to_field(PitchDescription)
     zone = pw.BigIntegerField(null=True)
@@ -121,9 +121,9 @@ class _Pitch(pw.Model):
     pfx_z = pw.DoubleField(null=True)
     plate_x = pw.DoubleField(null=True)
     plate_z = pw.DoubleField(null=True)
-    on_3b = pw.ForeignKeyField(_Player, null=True, backref='on_3b')
-    on_2b = pw.ForeignKeyField(_Player, null=True, backref='on_2b')
-    on_1b = pw.ForeignKeyField(_Player, null=True, backref='on_1b')
+    on_3b = pw.ForeignKeyField(_Player, null=True, backref="on_3b")
+    on_2b = pw.ForeignKeyField(_Player, null=True, backref="on_2b")
+    on_1b = pw.ForeignKeyField(_Player, null=True, backref="on_1b")
     outs_when_up = pw.BigIntegerField()
     half_inning = pw.BigIntegerField()
     hc_x = pw.DoubleField(null=True)
@@ -142,14 +142,14 @@ class _Pitch(pw.Model):
     effective_speed = pw.DoubleField(null=True)
     release_spin_rate = pw.BigIntegerField(null=True)
     release_extension = pw.DoubleField(null=True)
-    fielder_2 = pw.ForeignKeyField(_Player, backref='as_fielder_2')
-    fielder_3 = pw.ForeignKeyField(_Player, backref='as_fielder_3')
-    fielder_4 = pw.ForeignKeyField(_Player, backref='as_fielder_4')
-    fielder_5 = pw.ForeignKeyField(_Player, backref='as_fielder_5')
-    fielder_6 = pw.ForeignKeyField(_Player, backref='as_fielder_6')
-    fielder_7 = pw.ForeignKeyField(_Player, backref='as_fielder_7')
-    fielder_8 = pw.ForeignKeyField(_Player, backref='as_fielder_8')
-    fielder_9 = pw.ForeignKeyField(_Player, backref='as_fielder_9')
+    fielder_2 = pw.ForeignKeyField(_Player, backref="as_fielder_2")
+    fielder_3 = pw.ForeignKeyField(_Player, backref="as_fielder_3")
+    fielder_4 = pw.ForeignKeyField(_Player, backref="as_fielder_4")
+    fielder_5 = pw.ForeignKeyField(_Player, backref="as_fielder_5")
+    fielder_6 = pw.ForeignKeyField(_Player, backref="as_fielder_6")
+    fielder_7 = pw.ForeignKeyField(_Player, backref="as_fielder_7")
+    fielder_8 = pw.ForeignKeyField(_Player, backref="as_fielder_8")
+    fielder_9 = pw.ForeignKeyField(_Player, backref="as_fielder_9")
     release_pos_y = pw.DoubleField(null=True)
     estimated_ba_using_speedangle = pw.DoubleField(null=True)
     estimated_woba_using_speedangle = pw.DoubleField(null=True)
@@ -202,13 +202,13 @@ class _Pitch(pw.Model):
     intercept_ball_minus_batter_pos_y_inches = pw.DoubleField(null=True)
 
     class Meta:
-        table_name = 'pitch'
+        table_name = "pitch"
 
 
 def pitch_model(db: pw.SqliteDatabase) -> ty.Type[_Pitch]:
     class Pitch(_Pitch):
         class Meta:  # type: ignore
-            table_name = 'pitch'
+            table_name = "pitch"
             database = db
 
     return Pitch

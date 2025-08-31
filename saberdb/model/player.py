@@ -14,13 +14,13 @@ class _Player(pw.Model):
     mlb_last_played_year = pw.DateField(null=True)
 
     class Meta:
-        table_name = 'player'
+        table_name = "player"
 
 
 def player_model(db: pw.SqliteDatabase) -> ty.Type[_Player]:
     class Player(_Player):
         class Meta:  # type: ignore
-            table_name = 'player'
+            table_name = "player"
             database = db
 
     return Player

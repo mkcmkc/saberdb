@@ -4,7 +4,9 @@ import typing as ty
 import peewee as pw
 
 
-def enum_to_field(en: ty.Type[enum.StrEnum], *, null: bool=False) -> (pw.FixedCharField | pw.CharField):
+def enum_to_field(
+    en: ty.Type[enum.StrEnum], *, null: bool = False
+) -> pw.FixedCharField | pw.CharField:
     choices = [(x.value, x.name) for x in en]
     max_len = max(len(x) for x, _ in choices)
     assert max_len >= 1
