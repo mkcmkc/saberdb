@@ -1,5 +1,6 @@
 .PHONY: refresh
 refresh:
+	poetry install --with dev
 	poetry update --with dev
 	poetry sync --with dev
 
