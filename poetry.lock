@@ -1820,6 +1820,18 @@ docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,<8.2)", "pytest-mock", "pytest-mypy-testing"]
 
 [[package]]
+name = "types-peewee"
+version = "3.18.2.20250710"
+description = "Typing stubs for peewee"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_peewee-3.18.2.20250710-py3-none-any.whl", hash = "sha256:f4fa6f849247a9167abf11e5908354efbd41c1f5f2cca66abf6900d2332b03c3"},
+    {file = "types_peewee-3.18.2.20250710.tar.gz", hash = "sha256:8fc803df43f42f663798300d36cd5015478960c8cca5e27de9676c42ff3b74f1"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.15.0"
 description = "Backported and Experimental Type Hints for Python 3.9+"
@@ -1876,4 +1888,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "d47461dbdea18d0ecbde16a2c80e61042cc8919447617fe2e0417ac612eecf20"
+content-hash = "4c8b5983a5dada83b12d007e6fdeb593feeac98706d7aa0bef60953db0f36c09"

@@ -20,7 +20,7 @@ class GameType(enum.StrEnum):
 class _Game(pw.Model):
     pk = pw.PrimaryKeyField()
     date = pw.DateField(index=True)
-    game_type = util._enum_to_field(GameType)
+    game_type = util.enum_to_field(GameType)
     home_team = pw.TextField()
     away_team = pw.TextField()
 
