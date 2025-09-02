@@ -1,5 +1,6 @@
 .PHONY: refresh
 refresh:
+	rm poetry.lock
 	poetry install --with dev
 	poetry update --with dev
 	poetry sync --with dev
