@@ -2,10 +2,13 @@ import datetime
 import itertools as it
 import typing as ty
 import math
+from pathlib import Path
+import json
 
 from termcolor import cprint
 import pandas as pd
 import peewee as pw
+import numpy as np
 
 from pybaseball import statcast, playerid_reverse_lookup  # type: ignore
 
@@ -49,7 +52,9 @@ def coerce(field: pw.Field, value: ty.Any) -> tuple[ty.Any, type]:
                 new_value = int(value)
 
             return new_value, int
-        case pw.TextField():
+        case pw.DoubleField():
+            return new_value, float
+        case pw.CharField() | pw.TextField():
             return new_value, str
         case pw.DateField():
             if isinstance(value, float):
@@ -220,3 +225,158 @@ def fill_player_table(
         player_lookup[player_id] = player
 
     return player_lookup
+
+
+# TODO(mkcmkc): Separate into individual fill functions to aggregate SQL queries.
+def fill_db(db_path: Path, df: pd.DataFrame) -> None:
+    db: None | pw.SqliteDatabase = None
+    try:
+        db = pw.SqliteDatabase(str(db_path))
+        models = model.get_db_models(db)
+        db.connect()
+        db.create_tables([models.Game, models.Pitch, models.Player, models.DateCache])
+
+        cached_dates: set[str] = set()
+        for record in models.DateCache.select():
+            cached_date = record.date
+            assert isinstance(cached_date, datetime.date)
+            cached_dates.add(cached_date.strftime("%Y-%m-%d"))
+
+        df_new = df[~(df["game_date"].isin(cached_dates))]
+        player_lookup = fill_player_table(df_new, models)
+
+        pitch_fields: list[pw.Field] = list(models.Pitch._meta.fields.values())  # type: ignore
+
+        game_groups = df_new.groupby(["game_pk"], sort=False, as_index=False)
+        player_id_fields = (
+            {"batter_id", "pitcher_id"}
+            | {f"on_{i!s}b_id" for i in range(1, 4)}
+            | {f"fielder_{i!s}_id" for i in range(2, 10)}
+        )
+        for _, df_group in game_groups:
+            first_row = df_group.iloc[0]
+            pk = first_row["game_pk"]
+            assert isinstance(pk, np.int64)  # type: ignore
+            pk = int(pk)
+            date_str = first_row["game_date"]
+            assert isinstance(date_str, str)
+            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            game_type = first_row["game_type"]
+            assert isinstance(game_type, str)
+            assert game_type in model.GameType, U.dbg_info(
+                "Game type is invalid", game_type=game_type
+            )
+            home_team = first_row["home_team"]
+            assert isinstance(home_team, str)
+            away_team = first_row["away_team"]
+            assert isinstance(away_team, str)
+
+            date_cache = models.DateCache(date=date)
+            try:
+                models.DateCache.get_by_id(date_cache.get_id())
+                raise ValueError(
+                    "Date of game is already in DateCache: "
+                    + json.dumps(dict(df_group=df_group))
+                )
+            except pw.DoesNotExist:
+                date_cache.save(force_insert=True)
+
+            game = models.Game(
+                pk=pk,
+                date=date,
+                game_type=game_type,
+                home_team=home_team,
+                away_team=away_team,
+            )
+
+            try:
+                models.Game.get_by_id(game.get_id())
+                raise ValueError(
+                    "Inserting duplicate rows into Game table: "
+                    + json.dumps(dict(pk=pk))
+                )
+            except pw.DoesNotExist:
+                game.save(force_insert=True)
+
+            for _, row in df_group.iterrows():
+                pitch_args: dict[str, ty.Any] = {}
+                for field in pitch_fields:
+                    is_nullable = field.null
+                    column_name = field.column_name
+                    if column_name == "id":
+                        continue
+
+                    assert not isinstance(field, pw.AutoField)
+
+                    if column_name == "game_id":
+                        pitch_args[column_name] = game
+                        continue
+
+                    if column_name in player_id_fields:
+                        if column_name in {"on_1b_id", "on_2b_id", "on_3b_id"}:
+                            assert is_nullable
+                        else:
+                            assert not is_nullable
+
+                        index = column_name[: -(len("_id"))]
+                        player_id = row[index]
+                        assert isinstance(player_id, int) or isinstance(player_id, float)
+                        player_id = None if is_null(player_id) else player_id
+                        if player_id is None:
+                            player = None
+                        else:
+                            if isinstance(player_id, float):
+                                assert player_id == int(player_id)  # type: ignore
+                                player_id = int(player_id)
+
+                            assert isinstance(player_id, int)
+                            player = player_lookup[player_id]
+
+                        assert is_nullable or player is not None, U.dbg_info(
+                            "Cannot use `None` in non-nullable field",
+                            row=row,
+                            field=field,
+                        )
+                        pitch_args[column_name] = player
+                        continue
+
+                    assert not isinstance(field, pw.ForeignKeyField)
+
+                    index = {
+                        "result": "type",
+                    }.get(column_name, column_name)
+                    assert isinstance(index, str)
+
+                    if index == "half_inning":
+                        inning = row["inning"]
+                        assert isinstance(inning, int)
+                        inning_topbot = row["inning_topbot"].lower()
+                        assert inning_topbot in {"top", "bot"}
+                        value: ty.Any = 2 * inning - 1
+                        if inning_topbot == "bot":
+                            value += 1
+                    else:
+                        value = row[index]
+
+                    value = None if is_null(value) else value
+                    assert is_nullable or value is not None, U.dbg_info(
+                        "Cannot use `None` in non-nullable field", row=row, field=field
+                    )
+                    value, expected_type = coerce(field, value)
+                    assert value is None or isinstance(value, expected_type), (
+                        U.dbg_info(
+                            "Invalid value/type",
+                            row=row,
+                            field=field,
+                            value=value,
+                            value_type=type(value),
+                            expected_type=expected_type,
+                        )
+                    )
+                    pitch_args[column_name] = value
+
+                pitch = models.Pitch(**pitch_args)
+                pitch.save(force_insert=True)
+    finally:
+        if db is not None:
+            db.close()
