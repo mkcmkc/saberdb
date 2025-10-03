@@ -16,9 +16,9 @@ class GameType(enum.StrEnum):
     WORLD_SERIES = "W"
 
 
-# TODO(mkcmkc): Make date a foreign key into DateCache.
 class _Game(pw.Model):
     pk = pw.PrimaryKeyField()
+    # TODO(mkcmkc): Make this a foreign key into DateCache.
     date = pw.DateField(index=True)
     game_type = util.enum_to_field(GameType)
     home_team = pw.TextField()
