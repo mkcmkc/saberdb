@@ -4,6 +4,7 @@ import typing as ty
 import peewee as pw
 
 from . import util
+from .date_cache import _DateCache
 
 
 class GameType(enum.StrEnum):
@@ -18,8 +19,7 @@ class GameType(enum.StrEnum):
 
 class _Game(pw.Model):
     pk = pw.PrimaryKeyField()
-    # TODO(mkcmkc): Make this a foreign key into DateCache.
-    date = pw.DateField(index=True)
+    date = pw.ForeignKeyField(_DateCache, backref="games", index=True)
     game_type = util.enum_to_field(GameType)
     home_team = pw.TextField()
     away_team = pw.TextField()

@@ -176,7 +176,7 @@ def fill_player_table(
 # TODO(mkcmkc): Do bulk actions to minimize SQL calls.
 def fill_db(db: pw.SqliteDatabase, models: model.DBModels, df: pd.DataFrame) -> None:
     if db.is_closed():
-        raise ValueError("db mus be connected")
+        raise ValueError("db must be connected")
 
     db.create_tables([models.Game, models.Pitch, models.Player, models.DateCache])
     cached_dates: set[str] = set()
@@ -226,7 +226,7 @@ def fill_db(db: pw.SqliteDatabase, models: model.DBModels, df: pd.DataFrame) -> 
 
         game = models.Game(
             pk=pk,
-            date=date,
+            date=date_cache,
             game_type=game_type,
             home_team=home_team,
             away_team=away_team,
